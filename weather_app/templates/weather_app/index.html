@@ -1,0 +1,61 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Today</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}?v=1.27">
+</head>
+<body>
+
+    <!-- Header Section -->
+    <header class="header">
+        <img src="{% static 'images/logo.png' %}" alt="Weather App Logo" class="logo">
+        <div class="search-container">
+            <form method="post">
+                {% csrf_token %}
+                <input type="text" name="city" id="city-input" placeholder="Enter city name" required>
+                <button type="submit" class="get-weather">Get Weather</button>
+            </form>
+        </div>
+    </header>
+
+    <!-- Dynamic Background Image Section -->
+    <div class="background-image-container" style="background-image: url('{{ background_image }}');"></div>
+
+
+    <!-- Main Content Section -->
+{% if weather_data %}
+<main class="main-container">
+    <!-- Display Weather Data -->
+    <div class="weather-display">
+        <h2>{{ weather_data.city }}</h2>
+        <div class="weather-details">
+            <p>{{ weather_data.temperature }}°C</p>
+            <p>{{ weather_data.description }}</p>
+            <img src="http://openweathermap.org/img/w/{{ weather_data.icon }}.png" alt="{{ weather_data.description }}">
+        </div>
+    </div>
+
+    <!-- 5-Day Forecast -->
+    {% if daily_forecasts %}
+    <div class="forecast-section">
+        <h3>5-Day Forecast</h3>
+        <div class="forecast-row">
+            {% for forecast in daily_forecasts %}
+            <div class="forecast-card">
+                <h4>{{ forecast.day }}</h4>
+                <p>{{ forecast.min_temp }}°C - {{ forecast.max_temp }}°C</p>
+                <img src="http://openweathermap.org/img/w/{{ forecast.icon }}.png" alt="{{ forecast.description }}">
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</main>
+{% endif %}
+
+</body>
+</html>
